@@ -18,4 +18,4 @@ checks:
     target: 0.988..1.000
     aggregate: median
   defaults:
-precision: 2
+    precision: 3
