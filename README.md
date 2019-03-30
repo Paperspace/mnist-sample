@@ -17,7 +17,7 @@ First make sure you've [added the models folder to your Python path](/official/#
 Then to train the model, run the following:
 
 ```
-python mnist_test.py
+python mnist.py
 ```
 
 Distributed Training on Gradient
