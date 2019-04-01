@@ -49,6 +49,13 @@ You can export the model into Tensorflow [SavedModel](https://www.tensorflow.org
 python mnist.py --export_dir /tmp/mnist_saved_model
 ```
 
+## Training the model for use on a CPU
+
+If you are training on Tensorflow using a GPU but would like to export the model for use in Tensorflow Serving on a CPU-only server you can train and/or export the model using ` --data_format=channels_last`:
+```
+python mnist.py --data_format=channels_last
+```
+
 The SavedModel will be saved in a timestamped directory under `/tmp/mnist_saved_model/` (e.g. `/tmp/mnist_saved_model/1513630966/`).
 
 **Getting predictions with SavedModel**
