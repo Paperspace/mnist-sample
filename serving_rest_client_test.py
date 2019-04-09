@@ -1,7 +1,14 @@
 from random import randint
 import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
 import requests
 import tensorflow as tf
+
+
+def get_image_from_drive(path):
+    # Load the image
+    image = mpimg.imread(path)
+    return image
 
 
 def get_random_image_from_dataset(image_index=randint(0, 9999)):
@@ -42,9 +49,13 @@ def main():
 
     parser = argparse.ArgumentParser(description='Test MNIST TF Server')
     parser.add_argument('-u', '--url', help='Prediction HOST URL', default='http://127.0.0.1:8501/v1/models/mnist:predict')
+    parser.add_argument('-p', '--path', help='Example image path')
     args = parser.parse_args()
-
-    image = get_random_image_from_dataset()
+    # Load image from drive if specified, if not load example image from mnist dataset
+    if args.path:
+        image = get_image_from_drive(args.path)
+    else:
+        image = get_random_image_from_dataset()
     show_selected_image(image)
     make_prediction_request(image, args.url)
 
