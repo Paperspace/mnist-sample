@@ -111,10 +111,12 @@ def define_mnist_flags():
     flags_core.define_image()
     data_dir = os.path.abspath(os.environ.get('PS_JOBSPACE', os.getcwd()) + '/data')
     model_dir = os.path.abspath(os.environ.get('PS_MODEL_PATH', os.getcwd() + '/models') + '/mnist')
+    export_dir = os.path.abspath(os.environ.get('PS_MODEL_PATH', os.getcwd() + '/models'))
+
     flags.adopt_module_key_flags(flags_core)
     flags_core.set_defaults(data_dir=data_dir,
                             model_dir=model_dir,
-                            export_dir=os.environ.get('PS_MODEL_PATH', os.getcwd() + '/models'),
+                            export_dir=export_dir,
                             batch_size=int(os.environ.get('batch_size', 100)),
                             epochs_between_evals=20,
                             train_epochs=int(os.environ.get('train_epochs', 40)))
@@ -234,8 +236,8 @@ def run_mnist(flags_obj):
 
     tf.estimator.train_and_evaluate(mnist_classifier, train_spec, eval_spec)
 
-    # Export the model
-    if flags_obj.export_dir is not None:
+    # Export the model if node is master and export_dir is set
+    if flags_obj.export_dir is not None and os.environ.get('TYPE') == 'master':
         image = tf.placeholder(tf.float32, [None, 28, 28])
         input_fn = tf.estimator.export.build_raw_serving_input_receiver_fn({
             'image': image,
