@@ -112,13 +112,17 @@ def define_mnist_flags():
     data_dir = os.path.abspath(os.environ.get('PS_JOBSPACE', os.getcwd()) + '/data')
     model_dir = os.path.abspath(os.environ.get('PS_MODEL_PATH', os.getcwd() + '/models') + '/mnist')
     export_dir = os.path.abspath(os.environ.get('PS_MODEL_PATH', os.getcwd() + '/models'))
-
+    flags.eval_secs = int(os.environ.get('EVAL_SECS', 60))
     flags.adopt_module_key_flags(flags_core)
+    flags.max_steps = int(os.environ.get('MAX_STEPS', 150000))
+    flags.save_summary_steps = 10
+    flags.log_step_count_steps = 10
+    flags.ckpt_steps = 100
+    flags.max_ckpts = 2
     flags_core.set_defaults(data_dir=data_dir,
                             model_dir=model_dir,
                             export_dir=export_dir,
                             batch_size=int(os.environ.get('batch_size', 100)),
-                            epochs_between_evals=20,
                             train_epochs=int(os.environ.get('train_epochs', 40)))
 
 
@@ -191,7 +195,13 @@ def run_mnist(flags_obj):
         flags_core.get_num_gpus(flags_obj), flags_obj.all_reduce_alg)
 
     run_config = tf.estimator.RunConfig(
-        train_distribute=distribution_strategy, session_config=session_config)
+        train_distribute=distribution_strategy,
+        session_config=session_config,
+        save_checkpoints_steps=flags_obj.ckpt_steps,
+        keep_checkpoint_max=flags_obj.max_ckpts,
+        save_summary_steps=flags_obj.save_summary_steps,
+        log_step_count_steps=flags_obj.log_step_count_steps
+    )
 
     data_format = flags_obj.data_format
     if data_format is None:
@@ -229,21 +239,23 @@ def run_mnist(flags_obj):
         flags_obj.hooks, model_dir=flags_obj.model_dir,
         batch_size=flags_obj.batch_size)
 
-    train_spec = tf.estimator.TrainSpec(input_fn=train_input_fn, hooks=train_hooks, max_steps=15000)
+    train_spec = tf.estimator.TrainSpec(input_fn=train_input_fn, hooks=train_hooks, max_steps=flags_obj.max_steps)
     eval_spec = tf.estimator.EvalSpec(input_fn=eval_input_fn, steps=None,
                                       start_delay_secs=0,
-                                      throttle_secs=60)
+                                      throttle_secs=flags_obj.throttle_secs)
 
     tf.estimator.train_and_evaluate(mnist_classifier, train_spec, eval_spec)
 
     # Export the model if node is master and export_dir is set
     if flags_obj.export_dir is not None and os.environ.get('TYPE') == 'master':
+        tf.logging.debug('Starting to Export model to {}'.format(str(flags_obj.export_dir)))
         image = tf.placeholder(tf.float32, [None, 28, 28])
         input_fn = tf.estimator.export.build_raw_serving_input_receiver_fn({
             'image': image,
         })
         mnist_classifier.export_savedmodel(flags_obj.export_dir, input_fn,
                                            strip_default_attrs=True)
+        tf.logging.debug('Model Exported')
 
 
 def main(_):
@@ -251,7 +263,13 @@ def main(_):
 
 
 if __name__ == '__main__':
-    tf.logging.set_verbosity(tf.logging.INFO)
+
+    tf.logging.set_verbosity(tf.logging.DEBUG)
     set_tf_config()
     define_mnist_flags()
+    # Print ENV Variables
+    tf.logging.debug('=' * 20 + ' Environment Variables ' + '=' * 20)
+    for k, v in os.environ.items():
+        tf.logging.debug('{}: {}'.format(k, v))
+
     absl_app.run(main)
