@@ -243,7 +243,7 @@ def run_mnist(flags_obj):
 
     train_spec = tf.estimator.TrainSpec(input_fn=train_input_fn, hooks=train_hooks, max_steps=flags_obj.max_steps)
     eval_spec = tf.estimator.EvalSpec(input_fn=eval_input_fn, steps=None,
-                                      start_delay_secs=0,
+                                      start_delay_secs=10,
                                       throttle_secs=flags_obj.eval_secs)
 
     tf.estimator.train_and_evaluate(mnist_classifier, train_spec, eval_spec)
