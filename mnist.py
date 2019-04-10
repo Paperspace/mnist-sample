@@ -32,6 +32,7 @@ from utils.misc import distribution_utils
 from utils.misc import model_helpers
 
 LEARNING_RATE = 1e-4
+FLAGS = flags.FLAGS
 
 
 def create_model(data_format):
@@ -106,19 +107,20 @@ def set_tf_config():
 
 
 def define_mnist_flags():
+    flags.DEFINE_integer('eval_secs', 60, 'How frequently to run evaluation step')
+    flags.DEFINE_integer('ckpt_steps', 100, 'How frequently to save a model checkpoin')
+    flags.DEFINE_integer('max_ckpts', 2, 'Maximum number of checkpoints to keep')
+    flags.DEFINE_integer('max_steps', os.environ.get('MAX_STEPS', 150000), 'Max steps')
+    flags.DEFINE_integer('save_summary_steps', 10, 'How frequently to save TensorBoard summaries')
+    flags.DEFINE_integer('log_step_count_steps', 10, 'How frequently to log loss & global steps/s')
+
     flags_core.define_base()
     flags_core.define_performance(num_parallel_calls=False)
     flags_core.define_image()
     data_dir = os.path.abspath(os.environ.get('PS_JOBSPACE', os.getcwd()) + '/data')
     model_dir = os.path.abspath(os.environ.get('PS_MODEL_PATH', os.getcwd() + '/models') + '/mnist')
     export_dir = os.path.abspath(os.environ.get('PS_MODEL_PATH', os.getcwd() + '/models'))
-    flags.eval_secs = int(os.environ.get('EVAL_SECS', 60))
     flags.adopt_module_key_flags(flags_core)
-    flags.max_steps = int(os.environ.get('MAX_STEPS', 150000))
-    flags.save_summary_steps = 10
-    flags.log_step_count_steps = 10
-    flags.ckpt_steps = 100
-    flags.max_ckpts = 2
     flags_core.set_defaults(data_dir=data_dir,
                             model_dir=model_dir,
                             export_dir=export_dir,
@@ -242,7 +244,7 @@ def run_mnist(flags_obj):
     train_spec = tf.estimator.TrainSpec(input_fn=train_input_fn, hooks=train_hooks, max_steps=flags_obj.max_steps)
     eval_spec = tf.estimator.EvalSpec(input_fn=eval_input_fn, steps=None,
                                       start_delay_secs=0,
-                                      throttle_secs=flags_obj.throttle_secs)
+                                      throttle_secs=flags_obj.eval_secs)
 
     tf.estimator.train_and_evaluate(mnist_classifier, train_spec, eval_spec)
 
