@@ -113,7 +113,8 @@ def define_mnist_flags():
     flags.DEFINE_integer('max_steps', os.environ.get('MAX_STEPS', 150000), 'Max steps')
     flags.DEFINE_integer('save_summary_steps', 10, 'How frequently to save TensorBoard summaries')
     flags.DEFINE_integer('log_step_count_steps', 10, 'How frequently to log loss & global steps/s')
-
+    flags.DEFINE_integer('train_epochs', 40, 'Number of Train Epochs')
+    flags.DEFINE_integer('epochs_between_evals', 40, 'Number of Train Epochs before Eval')
     flags_core.define_base()
     flags_core.define_performance(num_parallel_calls=False)
     flags_core.define_image()
@@ -125,7 +126,7 @@ def define_mnist_flags():
                             model_dir=model_dir,
                             export_dir=export_dir,
                             batch_size=int(os.environ.get('batch_size', 100)),
-                            train_epochs=int(os.environ.get('train_epochs', 40)))
+                            )
 
 
 def model_fn(features, labels, mode, params):
