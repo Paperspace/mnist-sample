@@ -1,4 +1,4 @@
-version: 0
+version: 1
 
 type: "multi-grpc"
 ports: "5000"
