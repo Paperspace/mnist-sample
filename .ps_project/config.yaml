@@ -1,6 +1,6 @@
 version: 0
 
-type: "single"
+type: "multi-grpc"
 ports: "5000"
 parameter_server:
   container: "tensorflow/tensorflow:1.13.1-gpu-py3"
