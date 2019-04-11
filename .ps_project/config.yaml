@@ -1,4 +1,4 @@
-version: 1
+version: 0
 
 type: "single"
 ports: "5000"
