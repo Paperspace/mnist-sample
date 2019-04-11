@@ -2,11 +2,16 @@ version: 0
 
 type: "single"
 ports: "5000"
-worker:
+parameter_server:
   container: "tensorflow/tensorflow:1.13.1-gpu-py3"
-  command: "python mnist.py && ls -Ral /artifacts"
+  command: "python mnist.py"
   machine-type: "K80"
   count: 1
+worker:
+  container: "tensorflow/tensorflow:1.13.1-gpu-py3"
+  command: "python mnist.py"
+  machine-type: "K80"
+  count: 2
 model:
   type: Tensorflow
   path: '/artifacts'
