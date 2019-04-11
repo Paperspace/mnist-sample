@@ -2,7 +2,7 @@ version: 0
 
 type: "multi-grpc"
 ports: "5000"
-parameter_server:
+parameter-server:
   container: "tensorflow/tensorflow:1.13.1-gpu-py3"
   command: "python mnist.py"
   machine-type: "K80"
