@@ -24,3 +24,4 @@ checks:
     aggregate: median
   defaults:
     precision: 3
+
