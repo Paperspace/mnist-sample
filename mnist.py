@@ -123,9 +123,9 @@ def define_mnist_flags():
     flags_core.set_defaults(data_dir=data_dir,
                             model_dir=model_dir,
                             export_dir=export_dir,
-                            train_epochs=40,
-                            epochs_between_evals=40,
-                            batch_size=int(os.environ.get('batch_size', 100)),
+                            train_epochs=int(os.environ.get('TRAIN_EPOCHS', 40)),
+                            epochs_between_evals=int(os.environ.get('EPOCHS_EVAL', 100)),
+                            batch_size=int(os.environ.get('BATCH_SIZE', 100)),
                             )
 
 
