@@ -1,5 +1,6 @@
 # MNIST in TensorFlow
 
+This is a minor change to try triggering an experiment.
 This directory builds a convolutional neural net to classify the [MNIST
 dataset](http://yann.lecun.com/exdb/mnist/) using the
 [tf.data](https://www.tensorflow.org/api_docs/python/tf/data),
