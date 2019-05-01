@@ -8,6 +8,7 @@ and
 [tf.layers](https://www.tensorflow.org/api_docs/python/tf/layers)
 APIs.
 
+[...]
 
 ## Setup
 
