@@ -1,7 +1,9 @@
-version: 0
+version: 1
+
 
 type: "multi-grpc"
 ports: "5000"
+
 parameter-server:
   container: "tensorflow/tensorflow:1.13.1-gpu-py3"
   command: "python mnist.py"
@@ -12,15 +14,3 @@ worker:
   command: "python mnist.py"
   machine-type: "K80"
   count: 2
-model:
-  type: Tensorflow
-  path: '/artifacts'
-checks:
-  tensorflow:loss:
-    target: 0.0..1.0
-    aggregate: max
-  tensorflow:accuracy:
-    target: 0.988..1.000
-    aggregate: median
-  defaults:
-    precision: 3
