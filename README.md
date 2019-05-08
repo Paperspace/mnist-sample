@@ -25,13 +25,17 @@ pip install paperspace
 
 ### Create and start single node experiment
 
-```paperspace-python experiments createAndStart singlenode --name mnist --projectHandle <your project handle> --experimentEnv "{\"EPOCHS_EVAL\":5,\"TRAIN_EPOCHS\":10,\"MAX_STEPS\":1000,\"EVAL_SECS\":10}" --container tensorflow/tensorflow:1.13.1-gpu-py3 --machineType K80 --command "python mnist.py" --workspaceUrl https://github.com/Paperspace/mnist-sample.git```
+```
+paperspace-python experiments createAndStart singlenode --name mnist --projectHandle <your project handle> --experimentEnv "{\"EPOCHS_EVAL\":5,\"TRAIN_EPOCHS\":10,\"MAX_STEPS\":1000,\"EVAL_SECS\":10}" --container tensorflow/tensorflow:1.13.1-gpu-py3 --machineType K80 --command "python mnist.py" --workspaceUrl https://github.com/Paperspace/mnist-sample.git
+```
 
 Thats it!
 
 ### Create and start distributed multinode experiment
 
-```paperspace-python experiments createAndStart multinode --name mnist-multinode --projectHandle <your project handle> --experimentEnv "{\"EPOCHS_EVAL\":5,\"TRAIN_EPOCHS\":10,\"MAX_STEPS\":1000,\"EVAL_SECS\":10}" --experimentTypeId GRPC --workerContainer tensorflow/tensorflow:1.13.1-gpu-py3 --workerMachineType K80 --workerCommand "python mnist.py" --workerCount 2 --parameterServerContainer tensorflow/tensorflow:1.13.1-py3 --parameterServerMachineType K80 --parameterServerCommand "python mnist.py" --parameterServerCount 1 --workspaceUrl https://github.com/Paperspace/mnist-sample.git```
+```
+paperspace-python experiments createAndStart multinode --name mnist-multinode --projectHandle <your project handle> --experimentEnv "{\"EPOCHS_EVAL\":5,\"TRAIN_EPOCHS\":10,\"MAX_STEPS\":1000,\"EVAL_SECS\":10}" --experimentTypeId GRPC --workerContainer tensorflow/tensorflow:1.13.1-gpu-py3 --workerMachineType K80 --workerCommand "python mnist.py" --workerCount 2 --parameterServerContainer tensorflow/tensorflow:1.13.1-py3 --parameterServerMachineType K80 --parameterServerCommand "python mnist.py" --parameterServerCount 1 --workspaceUrl https://github.com/Paperspace/mnist-sample.git
+```
 
 # Local Setup
 
