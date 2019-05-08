@@ -249,8 +249,8 @@ def run_mnist(flags_obj):
 
     tf.estimator.train_and_evaluate(mnist_classifier, train_spec, eval_spec)
 
-    # Export the model if node is master and export_dir is set
-    if flags_obj.export_dir is not None and os.environ.get('TYPE') == 'master':
+    # Export the model if node is master and export_dir is set and if experiment is multinode - check if its master
+    if flags_obj.export_dir and ((os.environ.get('TF_CONFIG') and os.environ.get('TYPE') == 'master') or not os.environ.get('TF_CONFIG')):
         tf.logging.debug('Starting to Export model to {}'.format(str(flags_obj.export_dir)))
         image = tf.placeholder(tf.float32, [None, 28, 28])
         input_fn = tf.estimator.export.build_raw_serving_input_receiver_fn({
