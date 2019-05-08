@@ -24,6 +24,7 @@ import os
 from absl import app as absl_app
 from absl import flags
 import tensorflow as tf  # pylint: disable=g-bad-import-order
+from gradient_sdk import get_tf_config
 
 import dataset
 from utils.flags import core as flags_core
@@ -83,32 +84,9 @@ def create_model(data_format):
         ])
 
 
-def get_tf_config():
-    tf_config = os.environ.get('TF_CONFIG')
-    if not tf_config:
-        return
-    return json.loads(tf_config)
-
-
-def get_paperspace_tf_config():
-    tf_config = os.environ.get('TF_CONFIG')
-    if not tf_config:
-        return
-    paperspace_tf_config = json.loads(base64.urlsafe_b64decode(tf_config).decode('utf-8'))
-
-    tf.logging.debug(str(paperspace_tf_config))
-    return paperspace_tf_config
-
-
-def set_tf_config():
-    tf_config = get_paperspace_tf_config()
-    if tf_config:
-        os.environ['TF_CONFIG'] = json.dumps(tf_config)
-
-
 def define_mnist_flags():
-    flags.DEFINE_integer('eval_secs', 60, 'How frequently to run evaluation step')
-    flags.DEFINE_integer('ckpt_steps', 100, 'How frequently to save a model checkpoin')
+    flags.DEFINE_integer('eval_secs', os.environ.get('EVAL_SECS', 60), 'How frequently to run evaluation step')
+    flags.DEFINE_integer('ckpt_steps', os.environ.get('CKPT_STEPS', 100), 'How frequently to save a model checkpoin')
     flags.DEFINE_integer('max_ckpts', 2, 'Maximum number of checkpoints to keep')
     flags.DEFINE_integer('max_steps', os.environ.get('MAX_STEPS', 150000), 'Max steps')
     flags.DEFINE_integer('save_summary_steps', 10, 'How frequently to save TensorBoard summaries')
@@ -260,7 +238,7 @@ def run_mnist(flags_obj):
         input_fn = tf.estimator.export.build_raw_serving_input_receiver_fn({
             'image': image,
         })
-        mnist_classifier.export_savedmodel(flags_obj.export_dir, input_fn,
+        mnist_classifier.export_savedmodel(flags_obj.vexport_direxport_direxport_direxport_direxport_direxport_dir, input_fn,
                                            strip_default_attrs=True)
         tf.logging.debug('Model Exported')
 
@@ -272,7 +250,7 @@ def main(_):
 if __name__ == '__main__':
 
     tf.logging.set_verbosity(tf.logging.DEBUG)
-    set_tf_config()
+    get_tf_config()
     define_mnist_flags()
     # Print ENV Variables
     tf.logging.debug('=' * 20 + ' Environment Variables ' + '=' * 20)
