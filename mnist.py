@@ -17,14 +17,18 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import base64
-import json
 import os
 
 from absl import app as absl_app
 from absl import flags
 import tensorflow as tf  # pylint: disable=g-bad-import-order
-from gradient_sdk import get_tf_config
+
+gradient_sdk = True
+try:
+    from gradient_sdk import get_tf_config
+except ImportError:
+    print("Gradient SDK not installed. Distributed training is not possible")
+    gradient_sdk = False
 
 import dataset
 from utils.flags import core as flags_core
@@ -251,10 +255,8 @@ if __name__ == '__main__':
 
     tf.logging.set_verbosity(tf.logging.DEBUG)
 
-    try:
+    if gradient_sdk:
         get_tf_config()
-    except:
-        print("Something went wrong. Check if you set PS_CONFIG. PS_CONFIG not loaded, runing from local file config")
 
     define_mnist_flags()
     # Print ENV Variables
