@@ -18,7 +18,7 @@ APIs.
 pip install paperspace
 ```
 
-[Please check our documentation on how to install the Gradient CLI and obtain a Token](https://app.gitbook.com/@paperspace/s/gradient/cli/install-the-cli)
+[Please check our documentation on how to install Gradient CLI and obtain a Token](https://app.gitbook.com/@paperspace/s/gradient/cli/install-the-cli)
 
 ### Create project and obtain its handle
 
