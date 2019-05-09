@@ -17,14 +17,18 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import base64
-import json
 import os
 
 from absl import app as absl_app
 from absl import flags
 import tensorflow as tf  # pylint: disable=g-bad-import-order
-from gradient_sdk import get_tf_config
+
+gradient_sdk = True
+try:
+    from gradient_sdk import get_tf_config
+except ImportError:
+    print("Gradient SDK not installed. Distributed training is not possible")
+    gradient_sdk = False
 
 import dataset
 from utils.flags import core as flags_core
@@ -238,7 +242,7 @@ def run_mnist(flags_obj):
         input_fn = tf.estimator.export.build_raw_serving_input_receiver_fn({
             'image': image,
         })
-        mnist_classifier.export_savedmodel(flags_obj.vexport_direxport_direxport_direxport_direxport_direxport_dir, input_fn,
+        mnist_classifier.export_savedmodel(flags_obj.export_dir, input_fn,
                                            strip_default_attrs=True)
         tf.logging.debug('Model Exported')
 
@@ -250,7 +254,10 @@ def main(_):
 if __name__ == '__main__':
 
     tf.logging.set_verbosity(tf.logging.DEBUG)
-    get_tf_config()
+
+    if gradient_sdk:
+        get_tf_config()
+
     define_mnist_flags()
     # Print ENV Variables
     tf.logging.debug('=' * 20 + ' Environment Variables ' + '=' * 20)
