@@ -238,7 +238,7 @@ def run_mnist(flags_obj):
         input_fn = tf.estimator.export.build_raw_serving_input_receiver_fn({
             'image': image,
         })
-        mnist_classifier.export_savedmodel(flags_obj.vexport_direxport_direxport_direxport_direxport_direxport_dir, input_fn,
+        mnist_classifier.export_savedmodel(flags_obj.export_dir, input_fn,
                                            strip_default_attrs=True)
         tf.logging.debug('Model Exported')
 
@@ -250,7 +250,12 @@ def main(_):
 if __name__ == '__main__':
 
     tf.logging.set_verbosity(tf.logging.DEBUG)
-    get_tf_config()
+
+    try:
+        get_tf_config()
+    except:
+        print("Something went wrong. Check if you set PS_CONFIG. PS_CONFIG not loaded, runing from local file config")
+
     define_mnist_flags()
     # Print ENV Variables
     tf.logging.debug('=' * 20 + ' Environment Variables ' + '=' * 20)
