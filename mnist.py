@@ -89,12 +89,12 @@ def create_model(data_format):
 
 
 def define_mnist_flags():
-    flags.DEFINE_integer('eval_secs', os.environ.get('EVAL_SECS', 60), 'How frequently to run evaluation step')
-    flags.DEFINE_integer('ckpt_steps', os.environ.get('CKPT_STEPS', 100), 'How frequently to save a model checkpoin')
-    flags.DEFINE_integer('max_ckpts', 2, 'Maximum number of checkpoints to keep')
+    flags.DEFINE_integer('eval_secs', os.environ.get('EVAL_SECS', 600), 'How frequently to run evaluation step')
+    flags.DEFINE_integer('ckpt_steps', os.environ.get('CKPT_STEPS', 600), 'How frequently to save a model checkpoin')
+    flags.DEFINE_integer('max_ckpts', 5, 'Maximum number of checkpoints to keep')
     flags.DEFINE_integer('max_steps', os.environ.get('MAX_STEPS', 150000), 'Max steps')
-    flags.DEFINE_integer('save_summary_steps', 10, 'How frequently to save TensorBoard summaries')
-    flags.DEFINE_integer('log_step_count_steps', 10, 'How frequently to log loss & global steps/s')
+    flags.DEFINE_integer('save_summary_steps', 100, 'How frequently to save TensorBoard summaries')
+    flags.DEFINE_integer('log_step_count_steps', 100, 'How frequently to log loss & global steps/s')
     flags_core.define_base()
     flags_core.define_performance(num_parallel_calls=False)
     flags_core.define_image()
