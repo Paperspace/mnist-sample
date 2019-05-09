@@ -1,13 +1,28 @@
 from random import randint
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
+try:
+    import matplotlib.pyplot as plt
+except ImportError:
+    print('Matplotlib not detected - images plotting not available')
+
+plotting = True
+try:
+    from matplotlib import image as mpimage
+except ImportError:
+    from PIL import Image as pilimage
+    plotting = False
+
 import requests
 import tensorflow as tf
 
 
 def get_image_from_drive(path):
     # Load the image
-    image = mpimg.imread(path)
+    try:
+        image = pilimage.open(path)
+    except ImportError:
+        image = mpimage.open(path)
+    except Exception:
+        raise
     return image
 
 
@@ -56,7 +71,9 @@ def main():
         image = get_image_from_drive(args.path)
     else:
         image = get_random_image_from_dataset()
-    show_selected_image(image)
+
+    if plotting:
+        show_selected_image(image)
     make_prediction_request(image, args.url)
 
 
