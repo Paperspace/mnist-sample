@@ -256,8 +256,10 @@ if __name__ == '__main__':
     tf.logging.set_verbosity(tf.logging.DEBUG)
 
     if gradient_sdk:
-        get_tf_config()
-
+        try:
+            get_tf_config()
+        except ConfigError:
+            pass
     define_mnist_flags()
     # Print ENV Variables
     tf.logging.debug('=' * 20 + ' Environment Variables ' + '=' * 20)
