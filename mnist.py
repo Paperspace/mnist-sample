@@ -258,7 +258,7 @@ if __name__ == '__main__':
     if gradient_sdk:
         try:
             get_tf_config()
-        except ConfigError:
+        except:
             pass
     define_mnist_flags()
     # Print ENV Variables
