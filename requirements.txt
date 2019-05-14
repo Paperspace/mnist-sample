@@ -10,3 +10,8 @@ py-cpuinfo>=3.3.0
 scipy>=0.19.1
 typing
 matplotlib
+gradient-sdk
+pillow
+requests
+absl-py # for local run
+tensorflow==1.13.1 # for local run
