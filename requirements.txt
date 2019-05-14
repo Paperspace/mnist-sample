@@ -13,5 +13,3 @@ matplotlib
 gradient-sdk
 pillow
 requests
-absl-py # for local run
-tensorflow==1.13.1 # for local run
