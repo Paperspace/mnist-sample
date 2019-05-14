@@ -22,7 +22,6 @@ import os
 from absl import app as absl_app
 from absl import flags
 import tensorflow as tf  # pylint: disable=g-bad-import-order
-from gradient_sdk.exceptions import ConfigError
 
 gradient_sdk = True
 try:
@@ -259,7 +258,7 @@ if __name__ == '__main__':
     if gradient_sdk:
         try:
             get_tf_config()
-        except ConfigError:
+        except:
             pass
     define_mnist_flags()
     # Print ENV Variables
