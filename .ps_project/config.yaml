@@ -1,0 +1,25 @@
+version: 1
+type: "multi-grpc"
+ports: "5000"
+parameter-server:
+  container: "tensorflow/tensorflow:1.13.1-py3"
+  command: "pip install -r requirements.txt && python mnist.py"
+  machine-type: "G1"
+  count: 1
+worker:
+  container: "tensorflow/tensorflow:1.13.1-gpu-py3"
+  command: "pip install -r requirements.txt && python mnist.py"
+  machine-type: "K80"
+  count: 2
+model:
+  type: Tensorflow
+  path: '/artifacts'
+checks:
+  tensorflow:loss:
+    target: 0.0..1.0
+    aggregate: max
+  tensorflow:accuracy:
+    target: 0.988..1.000
+    aggregate: median
+  defaults:
+    precision: 3
