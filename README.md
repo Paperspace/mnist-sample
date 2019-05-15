@@ -120,7 +120,7 @@ You can download mnist sample on your local machine and run it on your computer.
 ```
 git clone git@github.com:Paperspace/mnist-sample.git
 ```
-- create virtual environment (we recommend using python3) and activate it
+- create virtual environment (we recommend using python3.6+) and activate it
 ```
 cd mnist-sample
 ```
