@@ -116,29 +116,23 @@ python mnist.py
 ###(Optional)Running localy from your virtualenv
 You can download mnist sample on your local machine and run it on your computer.
 
-- create directory and download code from github:
-```
-mkdir paperspace_mnist_sample
-```
-```
-cd paperspace_mnist_sample
-```
+- download code from github:
 ```
 git clone git@github.com:Paperspace/mnist-sample.git
 ```
-
 - create virtual environment (we recommend using python3) and activate it
-```
-virtualenv --python=python3 venv-mnist-sample
-```
-```
-source venv-mnist-sample/bin/activate
-```
-
-- install local requirements
 ```
 cd mnist-sample
 ```
+```
+python3 -m venv venv
+```
+```
+source venv/bin/activate
+```
+
+- install local requirements
+
 ```
 pip install -r requirements-local.txt
 ```
