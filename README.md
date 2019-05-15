@@ -113,6 +113,48 @@ Then, to train the model, simply run:
 python mnist.py
 ```
 
+###(Optional)Running localy from your virtualenv
+You can download mnist sample on your local machine and run it on your computer.
+
+- download code from github:
+```
+git clone git@github.com:Paperspace/mnist-sample.git
+```
+- create virtual environment (we recommend using python3.6+) and activate it
+```
+cd mnist-sample
+```
+```
+python3 -m venv venv
+```
+```
+source venv/bin/activate
+```
+
+- install local requirements
+
+```
+pip install -r requirements-local.txt
+```
+
+- run model
+
+Before you run it you should know that it will be running for a long time.
+Command to run model 
+```
+python mnist.py
+```
+If you want to shorten model training time you can change max steps parameter.
+```
+python mnist.py --max_steps=1500
+```
+
+Mnist data are downloaded to '/data' directory.
+
+Model results are stored to '/models' directory.
+
+Both directories can be safely deleted after interpreting model results.
+
 ## Exporting the model
 
 You can export the model into Tensorflow [SavedModel](https://www.tensorflow.org/guide/saved_model) format by using the argument `--export_dir`:
