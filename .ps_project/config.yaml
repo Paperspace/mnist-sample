@@ -1,7 +1,12 @@
 version: 0
 
-type: "single"
+type: "multi-grpc"
 ports: "5000"
+parameter-server:
+  container: "tensorflow/tensorflow:1.13.1-gpu-py3"
+  command: "python mnist.py"
+  machine-type: "K80"
+  count: 1
 worker:
   container: "tensorflow/tensorflow:1.13.1-gpu-py3"
   command: "python mnist.py"
@@ -9,7 +14,7 @@ worker:
   count: 2
 model:
   type: Tensorflow
-  path: "/artifacts"
+  path: '/artifacts'
 checks:
   tensorflow:loss:
     target: 0.0..1.0
