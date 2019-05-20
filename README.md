@@ -1,6 +1,8 @@
 # MNIST in TensorFlow
 
-This directory builds a convolutional neural net to classify the [MNIST
+This repository demonstrates using Paperspace Gradient to train and deploy a deep learning model to recognize handwritten characters, which is a canonical sample problem in machine learning.
+
+We use a convolutional neural network to classify the [MNIST
 dataset](http://yann.lecun.com/exdb/mnist/) using the
 [tf.data](https://www.tensorflow.org/api_docs/python/tf/data),
 [tf.estimator.Estimator](https://www.tensorflow.org/api_docs/python/tf/estimator/Estimator),
