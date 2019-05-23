@@ -176,3 +176,11 @@ The SavedModel will be saved in a timestamped directory under `/tmp/mnist_saved_
 ## Getting predictions with SavedModel
 
 Use [`saved_model_cli`](https://www.tensorflow.org/guide/saved_model#cli_to_inspect_and_execute_savedmodel) to inspect and execute the SavedModel.
+
+## Getting predictions using a script
+1. Clone down this repository
+1. Create a virtual environment (i.e. using `virtualenv`) in the root of the cloned directory
+1. Run `pip install -r requirements.txt`
+1. Run `python serving_rest_client_test.py --url https://staging-services.paperspace.io/model-serving/de1b8j937fgmkx:predict`
+
+_Note: you may encounter an error about installing Python as a framework related to *matplotlib*. If so, try updating the backend of your matploglib using [the recommendations here](https://stackoverflow.com/questions/21784641/installation-issue-with-matplotlib-python). If that doesn't work, try installing _python3_ with Homebrew and possibly use the [uninstall and reinstall method here](https://github.com/scikit-optimize/scikit-optimize/issues/637).
