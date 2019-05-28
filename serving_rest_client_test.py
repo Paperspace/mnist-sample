@@ -3,7 +3,6 @@ from random import randint
 plotting = True
 try:
     import matplotlib
-    matplotlib.use('TkAgg')
     import matplotlib.pyplot as plt
 except ImportError:
     print('Matplotlib not detected - images plotting not available')
