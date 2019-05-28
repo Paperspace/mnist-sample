@@ -1,33 +1,31 @@
 from random import randint
-try:
-    import matplotlib.pyplot as plt
-except ImportError:
-    print('Matplotlib not detected - images plotting not available')
 
 plotting = True
 try:
-    from matplotlib import image as mpimage
+    import matplotlib
+    import matplotlib.pyplot as plt
 except ImportError:
-    from PIL import Image as pilimage
+    print('Matplotlib not detected - images plotting not available')
     plotting = False
 
+import numpy as np
+from PIL import Image as pilimage
 import requests
 import tensorflow as tf
 
-
 def get_image_from_drive(path):
     # Load the image
-    try:
-        image = pilimage.open(path)
-    except ImportError:
-        image = mpimage.open(path)
-    except Exception:
-        raise
+    image = pilimage.open(path)
+    image = image.convert('L')
+    image = np.resize(image, (28,28,1))
+    image = np.array(image)
+    image = image.reshape(28,28)
     return image
 
 
 def get_random_image_from_dataset(image_index=randint(0, 9999)):
     (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
+    print('target class (from random test sample): %d' % y_test[image_index])
     return x_test[image_index]
 
 
@@ -55,7 +53,7 @@ def make_prediction_request(image, prediction_url):
     }
     response = requests.post(prediction_url, json=json)
 
-    print(response.status_code)
+    print('HTTP Response %s' % response.status_code)
     print(response.text)
 
 

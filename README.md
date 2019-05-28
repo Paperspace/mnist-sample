@@ -17,7 +17,7 @@ APIs.
 ### Install Gradient CLI
 
 ```
-pip install paperspace
+pip install -U paperspace
 ```
 
 [Please check our documentation on how to install Gradient CLI and obtain a Token](https://app.gitbook.com/@paperspace/s/gradient/cli/install-the-cli)
@@ -29,7 +29,14 @@ pip install paperspace
 ### Create and start single node experiment
 
 ```
-paperspace-python experiments createAndStart singlenode --name mnist --projectId <your-project-id> --experimentEnv "{\"EPOCHS_EVAL\":5,\"TRAIN_EPOCHS\":10,\"MAX_STEPS\":1000,\"EVAL_SECS\":10}" --container tensorflow/tensorflow:1.13.1-gpu-py3 --machineType K80 --command "python mnist.py" --workspaceUrl https://github.com/Paperspace/mnist-sample.git
+paperspace-python experiments createAndStart singlenode \
+  --name mnist \
+  --projectId <your-project-id> \
+  --experimentEnv "{\"EPOCHS_EVAL\":5,\"TRAIN_EPOCHS\":10,\"MAX_STEPS\":1000,\"EVAL_SECS\":10}" \
+  --container tensorflow/tensorflow:1.13.1-gpu-py3 \
+  --machineType K80 \
+  --command "python mnist.py" \
+  --workspaceUrl https://github.com/Paperspace/mnist-sample.git
 ```
 
 That's it!
@@ -39,7 +46,18 @@ That's it!
 ### Create and start distributed multinode experiment
 
 ```
-paperspace-python experiments createAndStart multinode --name mnist-multinode --projectId <your-project-id> --experimentEnv "{\"EPOCHS_EVAL\":5,\"TRAIN_EPOCHS\":10,\"MAX_STEPS\":1000,\"EVAL_SECS\":10}" --experimentTypeId GRPC --workerContainer tensorflow/tensorflow:1.13.1-gpu-py3 --workerMachineType K80 --workerCommand 'pip install -r requirements.txt && python mnist.py' --workerCount 2 --parameterServerContainer tensorflow/tensorflow:1.13.1-py3 --parameterServerMachineType K80 --parameterServerCommand 'pip install -r requirements.txt && python mnist.py' --parameterServerCount 1 --workspaceUrl https://github.com/Paperspace/mnist-sample.git
+paperspace-python experiments createAndStart multinode \
+  --name mnist-multinode \
+  --projectId <your-project-id> \
+  --experimentEnv "{\"EPOCHS_EVAL\":5,\"TRAIN_EPOCHS\":10,\"MAX_STEPS\":1000,\"EVAL_SECS\":10}" \
+  --experimentTypeId GRPC \
+  --workerContainer tensorflow/tensorflow:1.13.1-gpu-py3 \
+  --workerMachineType K80 \
+  --workerCommand 'pip install -r requirements.txt && python mnist.py' \
+  --workerCount 2 \
+  --parameterServerContainer tensorflow/tensorflow:1.13.1-py3 --parameterServerMachineType K80 \
+  --parameterServerCommand 'pip install -r requirements.txt && python mnist.py' \
+  --parameterServerCount 1 --workspaceUrl https://github.com/Paperspace/mnist-sample.git
 ```
 
 ### Modify your code to run distributed on Gradient
@@ -115,57 +133,84 @@ Then, to train the model, simply run:
 python mnist.py
 ```
 
-###(Optional)Running localy from your virtualenv
+### (Optional) Running localy from your virtualenv
 You can download mnist sample on your local machine and run it on your computer.
 
 - download code from github:
 ```
 git clone git@github.com:Paperspace/mnist-sample.git
 ```
-- create virtual environment (we recommend using python3.6+) and activate it
+- create a python virtual environment (we recommend using python3.7+) and activate it
 ```
 cd mnist-sample
-```
-```
+
 python3 -m venv venv
-```
-```
+
 source venv/bin/activate
 ```
 
-- install local requirements
+- install required python packages
 
 ```
 pip install -r requirements-local.txt
 ```
 
-- run model
+- train the model
 
 Before you run it you should know that it will be running for a long time.
-Command to run model 
+Command to train the model:
 ```
 python mnist.py
 ```
-If you want to shorten model training time you can change max steps parameter.
+If you want to shorten model training time you can change max steps parameter:
 ```
 python mnist.py --max_steps=1500
 ```
 
-Mnist data are downloaded to '/data' directory.
+Mnist data are downloaded to `./data` directory.
 
-Model results are stored to '/models' directory.
+Model results are stored to `./models` directory.
 
-Both directories can be safely deleted after interpreting model results.
+Both directories can be safely deleted if you would like to start the training over from the beginning.
 
-## Exporting the model
+## Exporting the model to a specific directory
 
-You can export the model into Tensorflow [SavedModel](https://www.tensorflow.org/guide/saved_model) format by using the argument `--export_dir`:
-
+You can export the model into a specific directory, in the Tensorflow [SavedModel](https://www.tensorflow.org/guide/saved_model) format, by using the argument `--export_dir`:
 ```
 python mnist.py --export_dir /tmp/mnist_saved_model
 ```
+If no export directory is specified the model is saved to a timestamped directory under `./models` subdirectory (e.g. `mnist-sample/models/1513630966/`).
 
-## Training the model for use with Tensorflow Serving on a CPU
+## Testing of a Paperspace Gradient Model Deployment Endpoint
+Example:
+```
+python serving_rest_client_test.py --url https://services.paperspace.io/model-serving/de6g5i8wko4km1:predict
+```
+Optionally you can provide a path to an image file to run a prediction on; example:
+```
+python serving_rest_client_test.py --url https://services.paperspace.io/model-serving/de6g5i8wko4km1:predict --path example5.png
+```
+
+## Local testing of Tensorflow Serving using docker
+Open another terminal window and run the following in the directory where you cloned this repo:
+```
+docker run -t --rm -p 8501:8501 -v "$(PWD)/models:/models/mnist" -e MODEL_NAME=mnist tensorflow/serving
+```
+Now you can test the local inference endpoint by running:
+```
+python serving_rest_client_test.py
+```
+Optionally you can provide a path to an image file to run a prediction on:
+```
+python serving_rest_client_test.py --path example3.png
+```
+Once you've completed local testing using the tensorflow/serving docker container, stop the running container as follows:
+```
+docker ps
+docker kill <container-id-or-name>
+```
+
+## Training the model on a node with a GPU for use with Tensorflow Serving on a node with only a CPU
 
 If you are training on Tensorflow using a GPU but would like to export the model for use in Tensorflow Serving on a CPU-only server, you can train and/or export the model using `--data_format=channels_last`:
 
@@ -173,8 +218,8 @@ If you are training on Tensorflow using a GPU but would like to export the model
 python mnist.py --data_format=channels_last
 ```
 
-The SavedModel will be saved in a timestamped directory under `/tmp/mnist_saved_model/` (e.g. `/tmp/mnist_saved_model/1513630966/`).
+The SavedModel will be saved in a timestamped directory under `models` subdirectory (e.g. `mnist-sample/models/1513630966/`).
 
-## Getting predictions with SavedModel
+## Inspecting and getting predictions with the SavedModel file
 
-Use [`saved_model_cli`](https://www.tensorflow.org/guide/saved_model#cli_to_inspect_and_execute_savedmodel) to inspect and execute the SavedModel.
+You can also use the [`saved_model_cli`](https://www.tensorflow.org/guide/saved_model#cli_to_inspect_and_execute_savedmodel) tool to inspect and execute the SavedModel.
