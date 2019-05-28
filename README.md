@@ -194,7 +194,7 @@ python serving_rest_client_test.py --url https://services.paperspace.io/model-se
 ## Local testing of Tensorflow Serving using docker
 Open another terminal window and run the following in the directory where you cloned this repo:
 ```
-docker run -t --rm -p 8501:8501 -v "$(PWD)/models:/models/mnist" -e MODEL_NAME=mnist tensorflow/serving
+docker run -t --rm -p 8501:8501 -v "$PWD/models:/models/mnist" -e MODEL_NAME=mnist tensorflow/serving
 ```
 Now you can test the local inference endpoint by running:
 ```
