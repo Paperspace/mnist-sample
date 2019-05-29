@@ -1,1 +1,8 @@
-
+numpy>=1.15.4
+pandas>=0.22.0
+scipy>=0.19.1
+typing
+gradient-sdk
+Pillow>=6.0.0
+requests>=2.22.0
+tensorflow==1.13.1
