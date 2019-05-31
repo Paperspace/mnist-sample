@@ -9,7 +9,7 @@ parameter-server:
 worker:
   container: "tensorflow/tensorflow:1.13.1-gpu-py3"
   command: "pip install -r requirements.txt && python mnist.py"
-  machine-type: "K80"
+  machine-type: "P100"
   count: 2
 model:
   type: Tensorflow
