@@ -121,26 +121,10 @@ You can also use Gradient SDK to ensure you have the correct path:
 from gradient_sdk.utils import data_dir, model_dir, export_dir
 ```
 
-# Local Setup
+# (Optional) Local Setup using a Virtual Environment
+Users sometimes run into local machine environment issues when trying to use Python. A common solution for this is to create and use a Python virtual environment to run Python from within. To do so:
 
-To begin, you'll simply need the latest version of TensorFlow installed.
-
-First make sure you've [added the models folder to your Python path](/official/#running-the-models); otherwise you may encounter an error like `ImportError: No module named mnist`.
-
-Then, to train the model, simply run:
-
-```
-python mnist.py
-```
-
-### (Optional) Running localy from your virtualenv
-You can download mnist sample on your local machine and run it on your computer.
-
-- download code from github:
-```
-git clone git@github.com:Paperspace/mnist-sample.git
-```
-- create a python virtual environment (we recommend using python3.7+) and activate it
+1. Create and activate a Python virtual environment (we recommend using python3.7+):
 ```
 cd mnist-sample
 
@@ -149,27 +133,40 @@ python3 -m venv venv
 source venv/bin/activate
 ```
 
-- install required python packages
-
+2. Install the required Python packages:
 ```
 pip install -r requirements-local.txt
 ```
 
-- train the model
+# Local Training
 
-Before you run it you should know that it will be running for a long time.
-Command to train the model:
+To train a the mnist model locally:
+
+1. Make sure you have the latest version of TensorFlow installed.
+
+2. Also make sure you've [added the models folder to your Python path](/official/#running-the-models); otherwise you may encounter an error like `ImportError: No module named mnist`.
+
+3. Download the code from GitHub:
+```
+git clone git@github.com:Paperspace/mnist-sample.git
+```
+
+4. Start training the model:
+
 ```
 python mnist.py
 ```
-If you want to shorten model training time you can change max steps parameter:
+
+_Note: local training will take a long time, so be prepared to wait!_
+
+If you want to shorten model training time, you can change the max steps parameter:
 ```
 python mnist.py --max_steps=1500
 ```
 
-Mnist data are downloaded to `./data` directory.
+The mnist dataset is downloaded to the `./data` directory.
 
-Model results are stored to `./models` directory.
+Model results are stored in the `./models` directory.
 
 Both directories can be safely deleted if you would like to start the training over from the beginning.
 
@@ -179,19 +176,21 @@ You can export the model into a specific directory, in the Tensorflow [SavedMode
 ```
 python mnist.py --export_dir /tmp/mnist_saved_model
 ```
-If no export directory is specified the model is saved to a timestamped directory under `./models` subdirectory (e.g. `mnist-sample/models/1513630966/`).
+If no export directory is specified, the model is saved to a timestamped directory under `./models` subdirectory (e.g. `mnist-sample/models/1513630966/`).
 
-## Testing of a Paperspace Gradient Model Deployment Endpoint
-Example:
+## Testing a Tensorflow Serving-deployed model on Paperspace
+To test the prediction endpoint of a model deployed with Tensorflow Serving on Paperspace, run the following commands, replacing `your-deployment-id` with your deployment's id:
 ```
-python serving_rest_client_test.py --url https://services.paperspace.io/model-serving/de6g5i8wko4km1:predict
+python serving_rest_client_test.py --url https://services.paperspace.io/model-serving/your-deployment-id:predict
 ```
-Optionally you can provide a path to an image file to run a prediction on; example:
+Optionally you can provide a path to an image file to run a prediction on, for example:
 ```
-python serving_rest_client_test.py --url https://services.paperspace.io/model-serving/de6g5i8wko4km1:predict --path example5.png
+python serving_rest_client_test.py --url https://services.paperspace.io/model-serving/your-deployment-id:predict --path example5.png
 ```
 
-## Local testing of Tensorflow Serving using docker
+_Note: it may be useful to run this test from within a virtual environment to guard against issues in your local environment. To do so, use the instructions above._
+
+## Testing a Tensorflow Serving-deployed model on your local machine using Docker
 Open another terminal window and run the following in the directory where you cloned this repo:
 ```
 docker run -t --rm -p 8501:8501 -v "$PWD/models:/models/mnist" -e MODEL_NAME=mnist tensorflow/serving
