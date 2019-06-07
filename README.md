@@ -62,6 +62,8 @@ paperspace-python experiments createAndStart multinode \
 
 ### Modify your code to run distributed on Gradient
 
+You can run the original Google mnist-sample code on Paperspace with minimal changes by simply setting TF_CONFIG and model_dir as follows.
+
 #### Set `TF_CONFIG` environment variable
 
 First import from gradient-sdk:
