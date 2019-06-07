@@ -62,6 +62,8 @@ paperspace-python experiments createAndStart multinode \
 
 ### Modify your code to run distributed on Gradient
 
+You can run the original Google mnist-sample code on Paperspace with minimal changes by simply setting TF_CONFIG and model_dir as follows.
+
 #### Set `TF_CONFIG` environment variable
 
 First import from gradient-sdk:
@@ -122,9 +124,11 @@ from gradient_sdk.utils import data_dir, model_dir, export_dir
 ```
 
 # (Optional) Local Setup using a Virtual Environment
+
 Users sometimes run into local machine environment issues when trying to use Python. A common solution for this is to create and use a Python virtual environment to run Python from within. To do so:
 
 1. Create and activate a Python virtual environment (we recommend using python3.7+):
+
 ```
 cd mnist-sample
 
@@ -134,6 +138,7 @@ source venv/bin/activate
 ```
 
 2. Install the required Python packages:
+
 ```
 pip install -r requirements-local.txt
 ```
@@ -147,6 +152,7 @@ To train a the mnist model locally:
 2. Also make sure you've [added the models folder to your Python path](/official/#running-the-models); otherwise you may encounter an error like `ImportError: No module named mnist`.
 
 3. Download the code from GitHub:
+
 ```
 git clone git@github.com:Paperspace/mnist-sample.git
 ```
@@ -160,6 +166,7 @@ python mnist.py
 _Note: local training will take a long time, so be prepared to wait!_
 
 If you want to shorten model training time, you can change the max steps parameter:
+
 ```
 python mnist.py --max_steps=1500
 ```
@@ -173,17 +180,23 @@ Both directories can be safely deleted if you would like to start the training o
 ## Exporting the model to a specific directory
 
 You can export the model into a specific directory, in the Tensorflow [SavedModel](https://www.tensorflow.org/guide/saved_model) format, by using the argument `--export_dir`:
+
 ```
 python mnist.py --export_dir /tmp/mnist_saved_model
 ```
+
 If no export directory is specified, the model is saved to a timestamped directory under `./models` subdirectory (e.g. `mnist-sample/models/1513630966/`).
 
 ## Testing a Tensorflow Serving-deployed model on Paperspace
+
 To test the prediction endpoint of a model deployed with Tensorflow Serving on Paperspace, run the following commands, replacing `your-deployment-id` with your deployment's id:
+
 ```
 python serving_rest_client_test.py --url https://services.paperspace.io/model-serving/your-deployment-id:predict
 ```
+
 Optionally you can provide a path to an image file to run a prediction on, for example:
+
 ```
 python serving_rest_client_test.py --url https://services.paperspace.io/model-serving/your-deployment-id:predict --path example5.png
 ```
@@ -191,19 +204,27 @@ python serving_rest_client_test.py --url https://services.paperspace.io/model-se
 _Note: it may be useful to run this test from within a virtual environment to guard against issues in your local environment. To do so, use the instructions above._
 
 ## Testing a Tensorflow Serving-deployed model on your local machine using Docker
+
 Open another terminal window and run the following in the directory where you cloned this repo:
+
 ```
 docker run -t --rm -p 8501:8501 -v "$PWD/models:/models/mnist" -e MODEL_NAME=mnist tensorflow/serving
 ```
+
 Now you can test the local inference endpoint by running:
+
 ```
 python serving_rest_client_test.py
 ```
+
 Optionally you can provide a path to an image file to run a prediction on:
+
 ```
 python serving_rest_client_test.py --path example3.png
 ```
+
 Once you've completed local testing using the tensorflow/serving docker container, stop the running container as follows:
+
 ```
 docker ps
 docker kill <container-id-or-name>
