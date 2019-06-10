@@ -20,11 +20,11 @@ APIs.
 pip install -U gradient
 ```
 
-[Please check our documentation on how to install Gradient CLI and obtain a Token](https://app.gitbook.com/@paperspace/s/gradient/cli/install-the-cli)
+[Please check our documentation on how to install Gradient CLI and obtain a Token](https://docs.paperspace.com/gradient/get-started/install-the-cli)
 
-### Create project and obtain its handle
+### Create project and get project id
 
-[Please check our documentation on how to create a project](https://app.gitbook.com/@paperspace/s/gradient/projects/create-a-project)
+[Please check our documentation on how to create a project and get the project id](https://docs.paperspace.com/gradient/projects/create-a-project)
 
 ### Create and start single node experiment
 
