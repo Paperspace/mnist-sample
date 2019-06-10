@@ -17,7 +17,7 @@ APIs.
 ### Install Gradient CLI
 
 ```
-pip install -U paperspace
+pip install -U gradient
 ```
 
 [Please check our documentation on how to install Gradient CLI and obtain a Token](https://app.gitbook.com/@paperspace/s/gradient/cli/install-the-cli)
@@ -29,7 +29,7 @@ pip install -U paperspace
 ### Create and start single node experiment
 
 ```
-paperspace-python experiments createAndStart singlenode \
+gradient experiments run singlenode \
   --name mnist \
   --projectId <your-project-id> \
   --experimentEnv "{\"EPOCHS_EVAL\":5,\"TRAIN_EPOCHS\":10,\"MAX_STEPS\":1000,\"EVAL_SECS\":10}" \
@@ -46,7 +46,7 @@ That's it!
 ### Create and start distributed multinode experiment
 
 ```
-paperspace-python experiments createAndStart multinode \
+gradient experiments run multinode \
   --name mnist-multinode \
   --projectId <your-project-id> \
   --experimentEnv "{\"EPOCHS_EVAL\":5,\"TRAIN_EPOCHS\":10,\"MAX_STEPS\":1000,\"EVAL_SECS\":10}" \
