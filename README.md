@@ -246,13 +246,7 @@ You can also use the [`saved_model_cli`](https://www.tensorflow.org/guide/saved_
 
 ### Running TensorBoards
 
-Change your current working directory to `models` subdirectory:
-if you in `mnist-sample` directory type:
-```
-cd models
-```
-
-And then when we are here you can just type (change name mnist to your model name if you have other name):
+Just type (change name mnist to your model name if you have other name):
 ```
 tensorboard --logdir models/mnist 
 ```
