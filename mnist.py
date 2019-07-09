@@ -156,7 +156,7 @@ def model_fn(features, labels, mode, params):
         logits = model(image, training=False)
         loss = tf.losses.sparse_softmax_cross_entropy(labels=labels, logits=logits)
 
-        tf.summary.scalar('loss', loss)
+        tf.summary.scalar('eval_loss', loss)
 
         return tf.estimator.EstimatorSpec(
             mode=tf.estimator.ModeKeys.EVAL,

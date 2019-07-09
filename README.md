@@ -254,5 +254,5 @@ cd models
 
 And then when we are here you can just type (change name mnist to your model name if you have other name):
 ```
-tensorboard --logdir mnist 
+tensorboard --logdir models/mnist 
 ```
