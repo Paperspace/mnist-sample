@@ -146,6 +146,8 @@ def model_fn(features, labels, mode, params):
         # Save accuracy scalar to Tensorboard output.
         tf.summary.scalar('train_accuracy', accuracy[1])
 
+        tf.summary.scalar('loss', loss)
+
         return tf.estimator.EstimatorSpec(
             mode=tf.estimator.ModeKeys.TRAIN,
             loss=loss,
@@ -153,6 +155,9 @@ def model_fn(features, labels, mode, params):
     if mode == tf.estimator.ModeKeys.EVAL:
         logits = model(image, training=False)
         loss = tf.losses.sparse_softmax_cross_entropy(labels=labels, logits=logits)
+
+        tf.summary.scalar('eval_loss', loss)
+
         return tf.estimator.EstimatorSpec(
             mode=tf.estimator.ModeKeys.EVAL,
             loss=loss,

@@ -243,3 +243,10 @@ The SavedModel will be saved in a timestamped directory under `models` subdirect
 ## Inspecting and getting predictions with the SavedModel file
 
 You can also use the [`saved_model_cli`](https://www.tensorflow.org/guide/saved_model#cli_to_inspect_and_execute_savedmodel) tool to inspect and execute the SavedModel.
+
+### Running TensorBoards
+
+Just type (change name mnist to your model name if you have other name):
+```
+tensorboard --logdir models/mnist 
+```
