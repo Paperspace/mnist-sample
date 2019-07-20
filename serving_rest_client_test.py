@@ -63,7 +63,15 @@ def main():
     parser = argparse.ArgumentParser(description='Test MNIST TF Server')
     parser.add_argument('-u', '--url', help='Prediction HOST URL', default='http://127.0.0.1:8501/v1/models/mnist:predict')
     parser.add_argument('-p', '--path', help='Example image path')
+    parser.add_argument('-i', '--iterations', type=int, help='Number of iterations; use -1 for forever')
     args = parser.parse_args()
+
+    i = 1
+    req_cnt = 0
+    if args.iterations:
+        i = args.iterations
+        ploting = False
+
     # Load image from drive if specified, if not load example image from mnist dataset
     if args.path:
         image = get_image_from_drive(args.path)
@@ -72,7 +80,16 @@ def main():
 
     if plotting:
         show_selected_image(image)
-    make_prediction_request(image, args.url)
+
+    while i != 0:
+        if args.iterations:
+            req_cnt += 1
+            print('Iteration: %d' % req_cnt)
+        make_prediction_request(image, args.url)
+        if args.path is None:
+            image = get_random_image_from_dataset()
+        if i > 0:
+            i -= 1
 
 
 if __name__ == '__main__':
