@@ -1,5 +1,7 @@
 # MNIST in TensorFlow
 
+[![Gradient](https://s3.amazonaws.com/ps.public.resources/img/gradient-badge-gradient-05.svg)](https://gradient.cloud)
+
 This repository demonstrates using Paperspace Gradient to train and deploy a deep learning model to recognize handwritten characters, which is a canonical sample problem in machine learning.
 
 We build a convolutional neural network to classify the [MNIST
