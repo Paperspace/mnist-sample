@@ -50,7 +50,7 @@ gradient experiments run multinode \
   --name mnist-multinode \
   --projectId <your-project-id> \
   --experimentEnv "{\"EPOCHS_EVAL\":5,\"TRAIN_EPOCHS\":10,\"MAX_STEPS\":1000,\"EVAL_SECS\":10}" \
-  --experimentTypeId GRPC \
+  --experimentType GRPC \
   --workerContainer tensorflow/tensorflow:1.13.1-gpu-py3 \
   --workerMachineType K80 \
   --workerCommand 'pip install -r requirements.txt && python mnist.py' \
