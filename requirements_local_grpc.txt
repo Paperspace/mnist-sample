@@ -2,5 +2,5 @@ numpy
 tensorflow
 keras
 grpcio
-setuptoolsr>=41.0
+setuptools>=41.0
 tensorflow-serving-api
