@@ -34,7 +34,10 @@ tf.app.flags.DEFINE_integer('concurrency', 1,
                             'maximum number of concurrent inference requests')
 tf.app.flags.DEFINE_integer('num_tests', 1, 'Number of test images')
 tf.app.flags.DEFINE_string('server', '', 'PredictionService host:port')
-tf.app.flags.DEFINE_string('work_dir', '/tmp', 'Working directory. ')
+tf.app.flags.DEFINE_string('work_dir', '/tmp', 'Working directory')
+tf.app.flags.DEFINE_string('model_name', 'mnist', 'Model name; specify "model" for Gradient')
+tf.app.flags.DEFINE_string('hostname_override', None, 'Hostname override')
+tf.app.flags.DEFINE_bool('insecure', False, 'Use insecure channel')
 FLAGS = tf.app.flags.FLAGS
 
 _counter = 0
@@ -68,7 +71,7 @@ def _callback(result_future):
           print("Time for ",FLAGS.num_tests," is ",end -_start)
 
 
-def do_inference(hostport, work_dir, concurrency, num_tests):
+def do_inference(hostport, work_dir, concurrency, num_tests, model_name, hostname_override, insecure):
     """Tests PredictionService with concurrent requests.
     Args:
         hostport: Host:port address of the PredictionService.
@@ -80,10 +83,21 @@ def do_inference(hostport, work_dir, concurrency, num_tests):
     Raises:
         IOError: An error occurred processing test data set.
     """
-    channel = grpc.insecure_channel(hostport)
+    if insecure:
+        channel_options=None
+        if hostname_override:
+            channel_options=(('grpc.default_authority', hostname_overrride),)
+        channel = grpc.insecure_channel(hostport, options=channel_options)
+    else:
+        channel_options=None
+        if hostname_override:
+            channel_options=(('grpc.ssl_target_name_override', hostname_override),)
+        channel_creds = grpc.ssl_channel_credentials()
+        channel = grpc.secure_channel(hostport, channel_creds, options=channel_options)
+
     stub = prediction_service_pb2_grpc.PredictionServiceStub(channel)
     request = predict_pb2.PredictRequest()
-    request.model_spec.name = 'mnist'
+    request.model_spec.name = model_name
     request.model_spec.signature_name = 'serving_default'
     
     (X_train, y_train), (X_test, y_test) = mnist.load_data()
@@ -102,14 +116,14 @@ def do_inference(hostport, work_dir, concurrency, num_tests):
         xt= x.astype(np.float32)
         request.inputs['image'].CopyFrom(tf.contrib.util.make_tensor_proto(xt, shape=[1,1,28, 28]))
         #result_counter.throttle()
-        result_future = stub.Predict.future(request, 10.25)  # 5 seconds  
+        result_future = stub.Predict.future(request, 10.25)  # 5 seconds; increase if above 1000 iterations
         result_future.add_done_callback(_callback)
         end = time.time()
         image_index=randint(0, 9999)
         x= X_train[image_index][0]
     print("Time to Send ", num_tests ," is ",end - start)
         
-    time.sleep(6)
+    time.sleep(6) # increase if above 1000 iterations
     # if things are wrong the callback will not come, so uncomment below to force the result
     # or get to see what is the bug
     #res= result_future.result()
@@ -126,7 +140,8 @@ def main(_):
     print('please specify server host:port')
     return
   error_rate = do_inference(FLAGS.server, FLAGS.work_dir,
-                            FLAGS.concurrency, FLAGS.num_tests)  
+                            FLAGS.concurrency, FLAGS.num_tests,
+                            FLAGS.model_name, FLAGS.hostname_override, FLAGS.insecure)
 
 if __name__ == '__main__':
     print ("hello from TFServing client slim")
