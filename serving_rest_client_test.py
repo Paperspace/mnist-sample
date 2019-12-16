@@ -1,19 +1,23 @@
 from random import randint
 
-plotting = True
-try:
-    import matplotlib
-    import matplotlib.pyplot as plt
-except ImportError:
-    print('Matplotlib not detected - images plotting not available')
-    plotting = False
-
 import numpy as np
 from PIL import Image as pilimage
 import requests
 import tensorflow as tf
 import argparse
 import getpass
+
+
+def try_importing_mathplotlib():
+    plotting = False
+    try:
+        import matplotlib
+        import matplotlib.pyplot as plt
+        plotting = True
+    except ImportError:
+        print('Matplotlib not detected - images plotting not available')
+    return plotting
+
 
 def get_image_from_drive(path):
     # Load the image
@@ -48,12 +52,12 @@ def make_vector(image):
     return vector
 
 
-def make_prediction_request(image, prediction_url, auth):
+def make_prediction_request(image, prediction_url, auth, verify):
     vector = make_vector(image)
     json = {
         "inputs": [vector]
     }
-    response = requests.post(prediction_url, json=json, auth=auth)
+    response = requests.post(prediction_url, json=json, auth=auth, verify=verify)
 
     print('HTTP Response %s' % response.status_code)
     print(response.text)
@@ -66,7 +70,13 @@ def main():
     parser.add_argument('-U', '--username', help='Basic Auth username')
     parser.add_argument('-P', '--password', help='Basic Auth password')
     parser.add_argument('-i', '--iterations', type=int, help='Number of iterations; use -1 for forever')
+    parser.add_argument('-V', '--verify', type=bool, help='Verify host SSL/TLS certificates; defaults to True', default=True)
+    parser.add_argument('-S', '--show', type=bool, help='Show sample digit using mathplotlib; defaults to False', default=False)
     args = parser.parse_args()
+
+    plotting = False
+    if args.show:
+        plotting = try_importing_mathplotlib()
 
     i = 1
     req_cnt = 0
@@ -93,7 +103,7 @@ def main():
         if args.iterations:
             req_cnt += 1
             print('Iteration: %d' % req_cnt)
-        make_prediction_request(image, args.url, auth)
+        make_prediction_request(image, args.url, auth, args.verify)
         if i > 0:
             i -= 1
         if i != 0 and args.path is None:
