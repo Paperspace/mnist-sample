@@ -1,30 +1,35 @@
-version: 1
-type: "multi-grpc"
-ports: "5000"
-filters:
-  tags:
-    only: 'v.*'
-  branches:
-    only: '.*'
-parameter-server:
-  container: "tensorflow/tensorflow:1.13.1-py3"
-  command: "pip install -r requirements.txt && python mnist.py"
-  machine-type: "G1"
-  count: 1
-worker:
-  container: "tensorflow/tensorflow:1.13.1-gpu-py3"
-  command: "pip install -r requirements.txt && python mnist.py"
-  machine-type: "K80"
-  count: 2
-model:
-  type: Tensorflow
-  path: '/artifacts'
-checks:
-  tensorflow:loss:
-    target: 0.0..1.0
-    aggregate: max
-  tensorflow:accuracy:
-    target: 0.988..1.000
-    aggregate: median
-  defaults:
-    precision: 3
+version: 2
+workflows:
+  testwf:
+    steps:
+      - name: testexp
+        triggers:
+          tags:
+            only: "v.*"
+          branches:
+            only: ".*"
+        command: experiment.run_multi_node
+        checks:
+          tensorflow:loss:
+            target: 0.0..1.0
+            aggregate: max
+          tensorflow:accuracy:
+            target: 0.988..1.000
+            aggregate: median
+          defaults:
+            precision: 3
+        params:
+          name: testexp
+          experimentType: "multi-grpc"
+          projectHandle: pr9apiw3w
+          ports: "5000"
+          parameterServerContainer: "tensorflow/tensorflow:1.13.1-py3"
+          parameterServerCommand: "pip install -r requirements.txt && python mnist.py"
+          parameterServerMachineType: "G1"
+          parameterServerCount: 1
+          workerContainer: "tensorflow/tensorflow:1.13.1-gpu-py3"
+          workerCommand: "pip install -r requirements.txt && python mnist.py"
+          workerMachineType: "K80"
+          workerCount: 2
+          modelType: Tensorflow
+          modelPath: "/artifacts"
