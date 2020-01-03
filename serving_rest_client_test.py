@@ -12,7 +12,6 @@ def try_importing_mathplotlib():
     plotting = False
     try:
         import matplotlib
-        import matplotlib.pyplot as plt
         plotting = True
     except ImportError:
         print('Matplotlib not detected - images plotting not available')
@@ -36,6 +35,7 @@ def get_random_image_from_dataset(x_test, y_test):
 
 
 def show_selected_image(image):
+    import matplotlib.pyplot as plt
     fig = plt.figure()
     plt.subplot(1, 1, 1)
     plt.tight_layout()
