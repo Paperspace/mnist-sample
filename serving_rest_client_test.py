@@ -8,6 +8,16 @@ import argparse
 import getpass
 
 
+def str2bool(v):
+    if isinstance(v, bool):
+       return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
 def try_importing_mathplotlib():
     plotting = False
     try:
@@ -70,8 +80,8 @@ def main():
     parser.add_argument('-U', '--username', help='Basic Auth username')
     parser.add_argument('-P', '--password', help='Basic Auth password')
     parser.add_argument('-i', '--iterations', type=int, help='Number of iterations; use -1 for forever')
-    parser.add_argument('-V', '--verify', type=bool, help='Verify host SSL/TLS certificates; defaults to True', default=True)
-    parser.add_argument('-S', '--show', type=bool, help='Show sample digit using mathplotlib; defaults to False', default=False)
+    parser.add_argument('-V', '--verify', type=str2bool, help='Verify host SSL/TLS certificates; defaults to True', default=True)
+    parser.add_argument('-S', '--show', type=str2bool, help='Show sample digit using mathplotlib; defaults to False', default=False)
     args = parser.parse_args()
 
     plotting = False
