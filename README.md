@@ -36,7 +36,7 @@ gradient experiments run singlenode \
   --container tensorflow/tensorflow:1.13.1-gpu-py3 \
   --machineType K80 \
   --command "python mnist.py" \
-  --workspaceUrl https://github.com/Paperspace/mnist-sample.git
+  --workspace https://github.com/Paperspace/mnist-sample.git
 ```
 
 That's it!
@@ -57,7 +57,7 @@ gradient experiments run multinode \
   --workerCount 2 \
   --parameterServerContainer tensorflow/tensorflow:1.13.1-py3 --parameterServerMachineType K80 \
   --parameterServerCommand 'pip install -r requirements.txt && python mnist.py' \
-  --parameterServerCount 1 --workspaceUrl https://github.com/Paperspace/mnist-sample.git
+  --parameterServerCount 1 --workspace https://github.com/Paperspace/mnist-sample.git
 ```
 
 ### Modify your code to run distributed on Gradient
