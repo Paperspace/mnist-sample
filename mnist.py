@@ -17,18 +17,13 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import base64
+import json
 import os
 
 from absl import app as absl_app
 from absl import flags
 import tensorflow as tf  # pylint: disable=g-bad-import-order
-
-gradient_sdk = True
-try:
-    from gradient_sdk import get_tf_config
-except ImportError:
-    print("Gradient SDK not installed. Distributed training is not possible")
-    gradient_sdk = False
 
 import dataset
 from utils.flags import core as flags_core
@@ -88,13 +83,36 @@ def create_model(data_format):
         ])
 
 
+def get_tf_config():
+    tf_config = os.environ.get('TF_CONFIG')
+    if not tf_config:
+        return
+    return json.loads(tf_config)
+
+
+def get_paperspace_tf_config():
+    tf_config = os.environ.get('TF_CONFIG')
+    if not tf_config:
+        return
+    paperspace_tf_config = json.loads(base64.urlsafe_b64decode(tf_config).decode('utf-8'))
+
+    tf.logging.debug(str(paperspace_tf_config))
+    return paperspace_tf_config
+
+
+def set_tf_config():
+    tf_config = get_paperspace_tf_config()
+    if tf_config:
+        os.environ['TF_CONFIG'] = json.dumps(tf_config)
+
+
 def define_mnist_flags():
-    flags.DEFINE_integer('eval_secs', os.environ.get('EVAL_SECS', 600), 'How frequently to run evaluation step')
-    flags.DEFINE_integer('ckpt_steps', os.environ.get('CKPT_STEPS', 600), 'How frequently to save a model checkpoint')
-    flags.DEFINE_integer('max_ckpts', 5, 'Maximum number of checkpoints to keep')
-    flags.DEFINE_integer('max_steps', os.environ.get('MAX_STEPS', 150000), 'Max steps')
-    flags.DEFINE_integer('save_summary_steps', 100, 'How frequently to save TensorBoard summaries')
-    flags.DEFINE_integer('log_step_count_steps', 100, 'How frequently to log loss & global steps/s')
+    flags.DEFINE_integer('eval_secs', 10, 'How frequently to run evaluation step')
+    flags.DEFINE_integer('ckpt_steps', 100, 'How frequently to save a model checkpoin')
+    flags.DEFINE_integer('max_ckpts', 2, 'Maximum number of checkpoints to keep')
+    flags.DEFINE_integer('max_steps', os.environ.get('MAX_STEPS', 100), 'Max steps')
+    flags.DEFINE_integer('save_summary_steps', 10, 'How frequently to save TensorBoard summaries')
+    flags.DEFINE_integer('log_step_count_steps', 10, 'How frequently to log loss & global steps/s')
     flags_core.define_base()
     flags_core.define_performance(num_parallel_calls=False)
     flags_core.define_image()
@@ -105,8 +123,8 @@ def define_mnist_flags():
     flags_core.set_defaults(data_dir=data_dir,
                             model_dir=model_dir,
                             export_dir=export_dir,
-                            train_epochs=int(os.environ.get('TRAIN_EPOCHS', 40)),
-                            epochs_between_evals=int(os.environ.get('EPOCHS_EVAL', 100)),
+                            train_epochs=int(os.environ.get('TRAIN_EPOCHS', 3)),
+                            epochs_between_evals=int(os.environ.get('EPOCHS_EVAL', 5)),
                             batch_size=int(os.environ.get('BATCH_SIZE', 100)),
                             )
 
@@ -146,8 +164,6 @@ def model_fn(features, labels, mode, params):
         # Save accuracy scalar to Tensorboard output.
         tf.summary.scalar('train_accuracy', accuracy[1])
 
-        tf.summary.scalar('loss', loss)
-
         return tf.estimator.EstimatorSpec(
             mode=tf.estimator.ModeKeys.TRAIN,
             loss=loss,
@@ -155,9 +171,6 @@ def model_fn(features, labels, mode, params):
     if mode == tf.estimator.ModeKeys.EVAL:
         logits = model(image, training=False)
         loss = tf.losses.sparse_softmax_cross_entropy(labels=labels, logits=logits)
-
-        tf.summary.scalar('eval_loss', loss)
-
         return tf.estimator.EstimatorSpec(
             mode=tf.estimator.ModeKeys.EVAL,
             loss=loss,
@@ -236,12 +249,8 @@ def run_mnist(flags_obj):
 
     tf.estimator.train_and_evaluate(mnist_classifier, train_spec, eval_spec)
 
-    # Export the model if node is master and export_dir is set and if experiment is multinode - check if its master
-    if os.environ.get('PS_CONFIG') and os.environ.get('TYPE') != 'master':
-        tf.logging.debug('No model was exported')
-        return
-
-    if flags_obj.export_dir:
+    # Export the model if node is master and export_dir is set
+    if flags_obj.export_dir is not None and os.environ.get('TYPE') == 'master':
         tf.logging.debug('Starting to Export model to {}'.format(str(flags_obj.export_dir)))
         image = tf.placeholder(tf.float32, [None, 28, 28])
         input_fn = tf.estimator.export.build_raw_serving_input_receiver_fn({
@@ -259,12 +268,7 @@ def main(_):
 if __name__ == '__main__':
 
     tf.logging.set_verbosity(tf.logging.DEBUG)
-
-    if gradient_sdk:
-        try:
-            get_tf_config()
-        except:
-            pass
+    set_tf_config()
     define_mnist_flags()
     # Print ENV Variables
     tf.logging.debug('=' * 20 + ' Environment Variables ' + '=' * 20)
