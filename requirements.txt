@@ -7,3 +7,4 @@ Pillow>=6.0.0
 requests>=2.22.0
 # tensorflow==1.13.1 # add Tensorflow if its not present in dockerfile
 pyspark
+decorator==4.3.2
