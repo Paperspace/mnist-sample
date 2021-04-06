@@ -6,8 +6,8 @@ gradient-sdk==0.0.4
 hyperopt==0.1.2
 idna==2.10
 networkx==2.4
-numpy==1.19.5
-pandas==1.1.5
+numpy==1.16.6
+pandas==1.18.5 
 Pillow==8.2.0
 pkg-resources==0.0.0
 py4j==0.10.9
