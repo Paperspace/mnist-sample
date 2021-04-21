@@ -96,7 +96,7 @@ def define_mnist_flags():
     flags.DEFINE_integer('eval_secs', os.environ.get('EVAL_SECS', 600), 'How frequently to run evaluation step')
     flags.DEFINE_integer('ckpt_steps', os.environ.get('CKPT_STEPS', 600), 'How frequently to save a model checkpoint')
     flags.DEFINE_integer('max_ckpts', 5, 'Maximum number of checkpoints to keep')
-    flags.DEFINE_integer('max_steps', os.environ.get('MAX_STEPS', 150000), 'Max steps')
+    flags.DEFINE_integer('max_steps', os.environ.get('MAX_STEPS', 100), 'Max steps')
     flags.DEFINE_integer('save_summary_steps', 100, 'How frequently to save TensorBoard summaries')
     flags.DEFINE_integer('log_step_count_steps', 100, 'How frequently to log loss & global steps/s')
     flags_core.define_base()
@@ -109,8 +109,8 @@ def define_mnist_flags():
     flags_core.set_defaults(data_dir=data_dir,
                             model_dir=model_dir,
                             export_dir=export_dir,
-                            train_epochs=int(os.environ.get('TRAIN_EPOCHS', 40)),
-                            epochs_between_evals=int(os.environ.get('EPOCHS_EVAL', 100)),
+                            train_epochs=int(os.environ.get('TRAIN_EPOCHS', 5)),
+                            epochs_between_evals=int(os.environ.get('EPOCHS_EVAL', 5)),
                             batch_size=int(os.environ.get('BATCH_SIZE', 100)),
                             )
 
