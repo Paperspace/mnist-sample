@@ -1,30 +1,33 @@
-version: 1
-type: "multi-grpc"
-ports: "5000"
-filters:
-  tags:
-    only: 'v.*'
-  branches:
-    only: '.*'
-parameter-server:
-  container: "tensorflow/tensorflow:1.13.1-py3"
-  command: "pip install -r requirements.txt && python mnist.py"
-  machine-type: "G1"
-  count: 1
-worker:
-  container: "tensorflow/tensorflow:1.13.1-gpu-py3"
-  command: "pip install -r requirements.txt && python mnist.py"
-  machine-type: "K80"
-  count: 2
-model:
-  type: Tensorflow
-  path: '/artifacts'
-checks:
-  tensorflow:loss:
-    target: 0.0..1.0
-    aggregate: max
-  tensorflow:accuracy:
-    target: 0.988..1.000
-    aggregate: median
-  defaults:
-    precision: 3
+version: 2
+workflows:
+  ci-test:
+    steps:
+      -
+        name: "my experiment"
+        command: experiment.run_multi_node
+        params:
+          ports: "5000"
+          modelPath: "/artifacts"
+          modelType: "Tensorflow"
+          workerCommand: "pip install -r requirements.txt && python mnist.py"
+          workerContainer: "tensorflow/tensorflow:1.13.1-gpu-py3"
+          workerMachineType: "K80"
+          workerCount: 2
+          parameterServerCount: 1
+          parameterServerCommand: "pip install -r requirements.txt && python mnist.py"
+          parameterServerContainer: "tensorflow/tensorflow:1.13.1-py3"
+          parameterServerMachineType: "G1"
+        checks:
+          tensorflow:loss:
+            target: 0.0..1.0
+            aggregate: max
+          tensorflow:accuracy:
+            target: 0.988..1.000
+            aggregate: median
+          defaults:
+            precision: 3
+    triggers:
+      tags:
+        only: 'v.*'
+      branches:
+        only: '.*'
