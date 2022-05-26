@@ -5,4 +5,4 @@ typing
 gradient-sdk
 Pillow>=6.0.0
 requests>=2.22.0
-tensorflow==1.13.1
+tensorflow==2.7.2
