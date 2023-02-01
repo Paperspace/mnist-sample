@@ -16,7 +16,7 @@ APIs.
 
 ### Install Gradient CLI
 
-```
+```console
 pip install -U gradient
 ```
 
@@ -28,7 +28,7 @@ pip install -U gradient
 
 ### Create and start single node experiment
 
-```
+```console
 gradient experiments run singlenode \
   --name mnist \
   --projectId <your-project-id> \
@@ -45,7 +45,7 @@ That's it!
 
 ### Create and start distributed multinode experiment
 
-```
+```console
 gradient experiments run multinode \
   --name mnist-multinode \
   --projectId <your-project-id> \
@@ -68,13 +68,13 @@ You can run the original Google mnist-sample code on Paperspace with minimal cha
 
 First import from gradient-sdk:
 
-```
+```python
 from gradient_sdk import get_tf_config
 ```
 
 then in your main():
 
-```
+```python
 if __name__ == '__main__':
     get_tf_config()
 ```
@@ -93,7 +93,7 @@ Please refer to [Tensorflow documentation](https://www.tensorflow.org/guide/save
 
 #### Example code showing how to export your model:
 
-```
+```python
 tf.estimator.train_and_evaluate(mnist_classifier, train_spec, eval_spec)
 
 #Starting to Export model
@@ -113,13 +113,13 @@ For details on the SavedModel format, please see the documentation at [SavedMode
 
 For export directory, be sure to set it to `PS_MODEL_PATH` when running a model deployment on Gradient:
 
-```
+```python
 export_dir = os.path.abspath(os.environ.get('PS_MODEL_PATH'))
 ```
 
 You can also use Gradient SDK to ensure you have the correct path:
 
-```
+```python
 from gradient_sdk.utils import data_dir, model_dir, export_dir
 ```
 
@@ -129,7 +129,7 @@ Users sometimes run into local machine environment issues when trying to use Pyt
 
 1. Create and activate a Python virtual environment (we recommend using python3.7+):
 
-```
+```console
 cd mnist-sample
 
 python3 -m venv venv
@@ -139,7 +139,7 @@ source venv/bin/activate
 
 2. Install the required Python packages:
 
-```
+```console
 pip install -r requirements-local.txt
 ```
 
@@ -153,13 +153,13 @@ To train a the mnist model locally:
 
 3. Download the code from GitHub:
 
-```
+```console
 git clone git@github.com:Paperspace/mnist-sample.git
 ```
 
 4. Start training the model:
 
-```
+```console
 python mnist.py
 ```
 
@@ -167,7 +167,7 @@ _Note: local training will take a long time, so be prepared to wait!_
 
 If you want to shorten model training time, you can change the max steps parameter:
 
-```
+```console
 python mnist.py --max_steps=1500
 ```
 
@@ -181,7 +181,7 @@ Both directories can be safely deleted if you would like to start the training o
 
 You can export the model into a specific directory, in the Tensorflow [SavedModel](https://www.tensorflow.org/guide/saved_model) format, by using the argument `--export_dir`:
 
-```
+```console
 python mnist.py --export_dir /tmp/mnist_saved_model
 ```
 
@@ -191,13 +191,13 @@ If no export directory is specified, the model is saved to a timestamped directo
 
 To test the prediction endpoint of a model deployed with Tensorflow Serving on Paperspace, run the following commands, replacing `your-deployment-id` with your deployment's id:
 
-```
+```console
 python serving_rest_client_test.py --url https://services.paperspace.io/model-serving/your-deployment-id:predict
 ```
 
 Optionally you can provide a path to an image file to run a prediction on, for example:
 
-```
+```console
 python serving_rest_client_test.py --url https://services.paperspace.io/model-serving/your-deployment-id:predict --path example5.png
 ```
 
@@ -207,25 +207,25 @@ _Note: it may be useful to run this test from within a virtual environment to gu
 
 Open another terminal window and run the following in the directory where you cloned this repo:
 
-```
+```console
 docker run -t --rm -p 8501:8501 -v "$PWD/models:/models/mnist" -e MODEL_NAME=mnist tensorflow/serving
 ```
 
 Now you can test the local inference endpoint by running:
 
-```
+```console
 python serving_rest_client_test.py
 ```
 
 Optionally you can provide a path to an image file to run a prediction on:
 
-```
+```console
 python serving_rest_client_test.py --path example3.png
 ```
 
 Once you've completed local testing using the tensorflow/serving docker container, stop the running container as follows:
 
-```
+```console
 docker ps
 docker kill <container-id-or-name>
 ```
@@ -234,7 +234,7 @@ docker kill <container-id-or-name>
 
 If you are training on Tensorflow using a GPU but would like to export the model for use in Tensorflow Serving on a CPU-only server, you can train and/or export the model using `--data_format=channels_last`:
 
-```
+```console
 python mnist.py --data_format=channels_last
 ```
 
@@ -247,6 +247,6 @@ You can also use the [`saved_model_cli`](https://www.tensorflow.org/guide/saved_
 ### Running TensorBoards
 
 Just type (change name mnist to your model name if you have other name):
-```
+```python
 tensorboard --logdir models/mnist 
 ```
